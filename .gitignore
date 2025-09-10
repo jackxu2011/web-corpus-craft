@@ -1,0 +1,9 @@
+data/
+result/
+models/
+mid/
+logs/
+llm/
+*.out
+.venv/
+uv.lock
