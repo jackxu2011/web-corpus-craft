@@ -241,3 +241,9 @@ def convert_to_gzip(input_dir):
     data_util.compress_existing_file(file, f'{file}.gz')
 
 # convert_to_gzip('/work/group1/datasets/v2/traffic/')
+
+def convert_to_csv(input_file):
+  df = pd.read_json(input_file, lines=True)
+  df.to_csv('/work/group1/data/r6_result/dclm_0.9_50k.csv', index=False)
+
+convert_to_csv('/work/group1/datasets/v1/data_0001.jsonl')

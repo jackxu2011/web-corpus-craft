@@ -11,6 +11,9 @@ from collections import defaultdict
 from glob import glob
 import argparse
 import data_util
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # -------------------------- 基础配置与全局变量初始化 --------------------------
 # 配置日志（实时控制台输出，格式简洁）
@@ -30,7 +33,7 @@ global_score_stats = defaultdict(int)  # 键：0-5分，值：数量
 global_error_count = 0  # 单独统计-1分（错误）的总数量
 file_score_details = {}  # 键：文件名，值：{0-5分数量, 错误数}
 
-API_KEY = '66d552f8f66343ccb1b7d1166fed01b1.hp7W0BIoosx5cVUz'  # 替换为你的智谱API密钥
+API_KEY = os.getenv('ZHIPU_API_KEY')  # 替换为你的智谱API密钥
 REQUEST_DELAY = 0.5  # 调用间隔（秒），MAX_THREADS*REQUEST_DELAY ≥1 可降低限流风险
 PROMPT = """
 [角色定位]
@@ -53,7 +56,7 @@ PROMPT = """
 0分：无任何交通相关内容及关键词或仅含歧义 “交通” 关键词（如 “交通部门”），易误导模型；
 
 [输出格式]
-仅输出0-5的阿拉伯数字
+仅输出0-5的阿拉伯数字,且只返回一个数字
     """
 
 # -------------------------- 信号处理函数（中断安全退出） --------------------------
@@ -196,10 +199,11 @@ def process_single_file(input_file, output_dir, model_name, max_threads):
         total_records = len(df)
         logger.info(f"\n=== 开始处理文件：{file_name}（总记录数：{total_records}）===")
 
-        # 筛选待评分记录：空值/错误值（含旧的0分错误标记）/超范围值 (df[score_col] > 5) |
+        # 筛选待评分记录：空值/错误值（含旧的0分错误标记）/超范围值
         rows_to_score = df[
             df[score_col].isna() |
-            (df[score_col] < 6) |
+            (df[score_col] < 0) |
+            (df[score_col] > 5) |
             (df[score_col].astype(str).isin(["", "翻译失败", "处理出错"]))
         ]
         total_to_score = len(rows_to_score)

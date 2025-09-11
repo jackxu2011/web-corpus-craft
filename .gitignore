@@ -7,3 +7,4 @@ llm/
 *.out
 .venv/
 uv.lock
+.env
