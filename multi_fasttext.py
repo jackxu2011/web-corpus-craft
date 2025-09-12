@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, "/mnt/data-token-cpfs/group-web/fastText/build/lib.linux-x86_64-cpython-310")
+# sys.path.insert(0, "/work/fastText/build/lib.linux-x86_64-cpython-310")
 
 import os
 import time
@@ -40,9 +40,10 @@ def load_texts_from_json(json_path, text_key="text", max_lines=None):
 def load_texts_from_jsonl(json_path, text_key="text", max_lines=None):
     df = pd.DataFrame()
     try:
-        df = pd.read_json(json_path, compression='zstd', lines=True)
+        df = pd.read_json(json_path, compression='zstd', lines=True, on_bad_lines="skip")
         if text_key in df.columns:
-            df[text_key] = df[text_key].apply(lambda x: x.replace('\n', ' '))
+            df = df[(df[text_key].str.len() < 100000) & (df[text_key].str.len() > 100)]
+            df.loc[:, text_key] = df[text_key].apply(lambda x: x.replace('\n', ' '))
     except Exception as e:
         logger.error(f"读取文件 {file} 时发生错误: {str(e)}")
         with open('logs/failed_file.log', 'a', encoding='utf-8') as f:
@@ -50,14 +51,8 @@ def load_texts_from_jsonl(json_path, text_key="text", max_lines=None):
     return df
 
 # 使用 fasttext 内部多线程函数 predict_mt
-def run_inference_mt(model, file, text_key='text'):
+def run_inference_mt(model, texts_df, text_key='text'):
     # model.eval()
-    texts_df = load_texts_from_jsonl(file, text_key)
-    logger.info(f"[INFO] Loaded {len(texts_df)} samples for inference.")
-
-    if len(texts_df) <= 0:
-        return 0,0,texts_df
-
     texts = texts_df[text_key].tolist()
     logger.info(f"[INFO] Start inference...")
     start = time.time()
@@ -79,7 +74,7 @@ def run_inference_mt(model, file, text_key='text'):
     concated_df = concated_df[(concated_df['label'] == '__label__1') & (concated_df['prob'] > 0.9)]
     end = time.time()
 
-    return end - start, len(df), concated_df[['prob', 'url', text_key]]
+    return end - start, concated_df[['prob', 'url', text_key]]
 
 def append_to_csv(file_path, new_data, index=False, **kwargs):
     """
@@ -114,8 +109,12 @@ def main(model, input_json, output_dir='data/result', num_threads=20):
 
     file_name = os.path.splitext(os.path.basename(input_json))[0]
 
-    total_time, length, result_df = run_inference_mt(model, input_json)
+    texts_df = load_texts_from_jsonl(input_json, text_key)
+    length = len(texts_df)
+    logger.info(f"[INFO] Loaded {length} samples for inference.")
+
     if length > 0:
+        total_time, result_df = run_inference_mt(model, texts_df)
         append_to_csv(f'{output_dir}/{file_name}.csv', result_df, index=False)
         avg_time = total_time / length
         speed = length / total_time

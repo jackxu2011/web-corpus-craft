@@ -12,7 +12,7 @@ def extract_domain(input_dir: str, output_dir: str):
     df_array=[]
     for file in tqdm(files, desc="deal files"):
         try:
-            df = pd.read_json(file, compression='zstd', lines=True)
+            df = pd.read_json(file, compression='zstd', lines=True, on_bad_lines="skip")
         except Exception as e:
             logger.error(f"读取文件 {file} 时发生错误: {str(e)}")
             continue
@@ -23,7 +23,9 @@ def extract_domain(input_dir: str, output_dir: str):
         df['domain'] = df.url.apply(data_util.extract_domain)
         group_domain = df.groupby('domain').size().reset_index(name='count')
         logger.info(f'{file} has {len(group_domain)} domain')
-        data_util.append_to_csv(os.path.join(output_dir, f'{file_name}.csv'), group_domain)
+        output_dir = os.path.dirname(file).replace('dclm-baseline', 'dclm-domain')
+        os.makedirs(output_dir, exist_ok=True)
+        group_domain.to_csv(f'{output_dir}/{file_name}.csv', index=False)
 
 # 示例用法
 if __name__ == "__main__":

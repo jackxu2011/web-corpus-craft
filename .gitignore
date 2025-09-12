@@ -1,6 +1,6 @@
-data/
-result/
-models/
+data
+result
+models
 mid/
 logs/
 llm/
@@ -8,3 +8,5 @@ llm/
 .venv/
 uv.lock
 .env
+__pycache__/
+group_data

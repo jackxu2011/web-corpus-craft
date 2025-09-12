@@ -5,14 +5,24 @@ import argparse
 import glob
 from loguru import logger
 
-def merge_csv(input_dir, output_file, columns = []):
+def merge_csv(input_dir, output_file, columns = [], text_key='text'):
   # 获取当前目录下所有 .csv 文件的路径
   file_paths = glob.glob(os.path.join(input_dir,"*.csv"))  # 可根据实际路径修改
-
+  metric = {
+    'total': 0,
+    'duplicated': 0,
+    'remain': 0
+  }
   # 读取每个文件并存入列表
   dataframes = []
   for file in tqdm(file_paths, desc='read files'):
-      df = pd.read_csv(file)
+
+      try:
+        df = pd.read_csv(file, on_bad_lines='skip', engine='python')
+        df = df[(df[text_key].str.len() < 100000) & (df[text_key].str.len() > 50)]
+        df.loc[:, text_key] = df[text_key].apply(lambda x: x.replace('\n', ' '))
+      except Exception as e:
+        logger.error(f'failed deal file: {file}, 发生未知错误：{str(e)}')
       if not columns:
         dataframes.append(df)
       else:
@@ -21,16 +31,23 @@ def merge_csv(input_dir, output_file, columns = []):
   # 合并所有 DataFrame
   combined_df = pd.concat(dataframes, ignore_index=True)
 
-  logger.info(f"原始数据行数: {len(combined_df)}")
-  logger.info(f"重复行数量: {combined_df.duplicated().sum()}")
+  metric['total'] = len(combined_df)
+  metric['duplicated'] = combined_df.duplicated().sum()
+
+  logger.info(f"原始数据行数: {metric['total']}")
+  logger.info(f"重复行数量: {metric['duplicated'] }")
   # 3. 去除重复行
   # 默认保留第一次出现的行，删除后续重复行
   df_cleaned = combined_df.drop_duplicates()
 
-  df_cleaned['text'] = df_cleaned.text.apply(lambda x: x.replace('\n', ' '))
 
-  logger.info(f"save {len(df_cleaned)} to file:{output_file}")
+
+  metric['remain'] = len(df_cleaned)
+
+  logger.info('begin save')
   df_cleaned.to_csv(output_file, index=False)
+  logger.info(f"save {metric['remain']} to file:{output_file}")
+  return metric
 
 # 示例用法
 if __name__ == "__main__":
