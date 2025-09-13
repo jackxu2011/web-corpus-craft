@@ -18,15 +18,13 @@ def merge_csv(input_dir, output_file, columns = [], text_key='text'):
   for file in tqdm(file_paths, desc='read files'):
 
       try:
-        df = pd.read_csv(file, on_bad_lines='skip', engine='python')
-        df = df[(df[text_key].str.len() < 100000) & (df[text_key].str.len() > 50)]
-        df.loc[:, text_key] = df[text_key].apply(lambda x: x.replace('\n', ' '))
+        df = pd.read_csv(file, on_bad_lines='skip')
+        if not columns:
+          dataframes.append(df)
+        else:
+          dataframes.append(df[columns])
       except Exception as e:
         logger.error(f'failed deal file: {file}, 发生未知错误：{str(e)}')
-      if not columns:
-        dataframes.append(df)
-      else:
-        dataframes.append(df[columns])
 
   # 合并所有 DataFrame
   combined_df = pd.concat(dataframes, ignore_index=True)
@@ -39,8 +37,6 @@ def merge_csv(input_dir, output_file, columns = [], text_key='text'):
   # 3. 去除重复行
   # 默认保留第一次出现的行，删除后续重复行
   df_cleaned = combined_df.drop_duplicates()
-
-
 
   metric['remain'] = len(df_cleaned)
 

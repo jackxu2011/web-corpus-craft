@@ -173,10 +173,10 @@ def merge_dataset(base_dir):
   for i in tqdm(range(10), desc='merge shard'):
     file_name = f'shard_{i+1:02d}'
     metrics.append(merge_csv(os.path.join(base_dir, file_name), os.path.join(base_dir,f'{file_name}.csv')))
-  global_metric = merge_csv(base_dir, os.path.join(base_dir,'global.csv'))
 
   global_total = 0
-  duplicated_total = global_metric['duplicated']
+  duplicated_total = 0
+  remain_total = 0
   for index, metric in enumerate(metrics) :
     global_total += metric['total']
     duplicated_total += metric['duplicated']
@@ -188,7 +188,7 @@ def merge_dataset(base_dir):
   logger.info(f'---- global -----')
   logger.info(f'---- total:{global_total} -----')
   logger.info(f'---- duplicated: {duplicated_total} -----')
-  logger.info(f'---- remain:{metric['total']} -----')
+  logger.info(f'---- remain:{remain_total} -----')
 
 merge_dataset('/work/group1/data/r7_dclm')
 #merge_csv('/work/group1/data/r7_dclm_r1/shard_05', '/work/group1/data/r7_dclm_r1/shard_05.csv')

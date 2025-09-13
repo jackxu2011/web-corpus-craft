@@ -42,8 +42,8 @@ def load_texts_from_jsonl(json_path, text_key="text", max_lines=None):
     try:
         df = pd.read_json(json_path, compression='zstd', lines=True, on_bad_lines="skip")
         if text_key in df.columns:
-            df = df[(df[text_key].str.len() < 100000) & (df[text_key].str.len() > 100)]
             df.loc[:, text_key] = df[text_key].apply(lambda x: x.replace('\n', ' '))
+            df = df[(df[text_key].str.len() < 100000) & (df[text_key].str.len() > 100)]
     except Exception as e:
         logger.error(f"读取文件 {file} 时发生错误: {str(e)}")
         with open('logs/failed_file.log', 'a', encoding='utf-8') as f:

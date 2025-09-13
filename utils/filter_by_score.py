@@ -15,7 +15,7 @@ def filter_by_score(input_dir, output_file, low=0, up=5, score_key='traffic_rele
     df = pd.read_csv(file)
     logger.info(f'{file} has {len(df)} rows')
     # 将列转换为数值类型，无法转换的设为NaN
-    df[score_key] = pd.to_numeric(df[score_key], errors='coerce')
+    df.loc[:, score_key] = pd.to_numeric(df[score_key], errors='coerce')
 
     # 过滤掉转换后为NaN的行（即非数值的行）
     df = df.dropna(subset=[score_key])
