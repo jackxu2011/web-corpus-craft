@@ -67,7 +67,7 @@ def filter_by_prob(
                 "总remain": f"{total_remain:,}",
                 f"评分大于{prob}占比": f"{total_remain/total_processed:.2%}"
             })
-            logger.info(
+            logger.debug(
                 f"块处理完成 | 块大小: {chunk_size:,} | "
                 f"本块新增: {new_remain:,}"
             )
@@ -77,7 +77,7 @@ def filter_by_prob(
     logger.info(f"原始记录总数: {total_processed:,} 行")
     logger.info(f"总记录数: {total_remain:,} 行")
     logger.info(f"评分大于{prob}占比: {total_remain/total_processed:.2%}")
-    logger.info(f"结果已保存至: {output_path}")
+    logger.info(f"结果已保存至: {output_file}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
