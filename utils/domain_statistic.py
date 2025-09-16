@@ -4,11 +4,12 @@ import hashlib
 from tqdm import tqdm
 from loguru import logger
 import argparse
+from data_util import extract_domain
 
-def url_count(
+def domain_statistic(
     input_file,
     output_file,
-    chunksize=10_000_000
+    chunksize=5_000_000
 ):
     """
     对大型CSV文件进行全局去重，同时统计块内重复和跨块重复
@@ -32,43 +33,45 @@ def url_count(
 
     # 分块读取并处理
     total_urls = 0
-    url_groups = []
-    with tqdm(desc=f"统计url") as pbar:
-        for chunk in pd.read_csv(input_file, usecols=['url'], encoding='utf-8', chunksize=chunksize):
-            total_urls += len(chunk)
-            grouped_url = chunk.groupby('url').size().reset_index(name='count')
-            url_groups.append(grouped_url)
-            pbar.update(1)
+    domain_groups = []
+    with tqdm(desc=f"统计domain") as pbar:
+        for chunk in pd.read_csv(input_file, encoding='utf-8', chunksize=chunksize):
+            chunk_len = len(chunk)
+            total_urls += chunk_len
+            chunk['domain'] = chunk.url.apply(extract_domain)
+            grouped_domain = chunk.groupby('domain')['count'].sum().reset_index()
+            domain_groups.append(grouped_domain)
+            pbar.update(chunk_len)
             pbar.set_postfix({
-                "本次处理": f"{len(chunk):,}",
-                "新增url": f"{len(grouped_url):,}"
+                "本次处理": f"{chunk_len:,}",
+                "新增url": f"{len(grouped_domain):,}"
             })
 
     logger.info(f'共有url记录： {total_urls} 条')
-    cat_df = pd.concat(url_groups, ignore_index=True)
-    df_sum = cat_df.groupby('url')['count'].sum().reset_index()
+    cat_df = pd.concat(domain_groups, ignore_index=True)
+    df_sum = cat_df.groupby('domain')['count'].sum().reset_index()
 
     # 排序
     logger.info(f'开始排序')
     sorted_url = df_sum.sort_values(by='count', ascending=False)
 
-    logger.info(f'共有唯一url数据：{len(df_sum)} 条')
+    logger.info(f'共有唯一domain数量：{len(df_sum)} 条')
 
     sorted_url.to_csv(output_file, index=False, encoding='utf-8')
 
     # 输出最终统计
     logger.info("\n===== 统计结果 =====")
     logger.info(f"处理总数: {total_urls:,} 行")
-    logger.info(f"唯一url数: {len(df_sum):,}")
+    logger.info(f"唯一domain数: {len(df_sum):,}")
     logger.info(f"结果已保存至: {output_file}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input_file", type=str)
     parser.add_argument("output_file", type=str)
-    parser.add_argument("--chunksize", type=int, default=10_000_000)
+    parser.add_argument("--chunksize", type=int, default=5_000_000)
     args = parser.parse_args()
-    url_count(
+    domain_statistic(
         input_file=args.input_file,
         output_file=args.output_file,
         chunksize=args.chunksize
