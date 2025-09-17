@@ -8,5 +8,5 @@ llm/
 .venv/
 uv.lock
 .env
-__pycache__/
 group_data
+__pycache__

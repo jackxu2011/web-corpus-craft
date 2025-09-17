@@ -284,7 +284,7 @@ if __name__ == "__main__":
     parser.add_argument("output_dir", type=str, help="输出目录")
     parser.add_argument("--dedup_cols", type=str, default=['url'], nargs='*', help="去重列")
     parser.add_argument("--target_rows", type=int, default=100_000, help="目标行数")
-    parser.add_argument("--initial_capacity", type=int, default=100_000_000, help="Bloom Filter 初始容量")
+    parser.add_argument("--initial_capacity", type=int, default=2_000_000_000, help="Bloom Filter 初始容量")
     parser.add_argument("--error_rate", type=float, default=0.001, help="Bloom Filter 误判率")
     args = parser.parse_args()
     main(args)
