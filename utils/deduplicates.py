@@ -66,13 +66,13 @@ def global_dedup(
 
             # 3. 再去除跨块重复（与之前块重复的记录）
             mask = ~chunk_unique_in_block["_hash"].isin(global_hash_set)
-            inter_dups = len(chunk_unique_in_block) - mask.sum()
+            new_unique = mask.sum()
+            inter_dups = len(chunk_unique_in_block) - new_unique
 
             block_total_dups = intra_dups + inter_dups
             total_duplicates += block_total_dups
 
             # 4. 更新统计和全局哈希集合
-            new_unique = mask.sum()
             total_unique += new_unique
             global_hash_set.update(
                 chunk_unique_in_block.loc[mask, "_hash"].tolist()

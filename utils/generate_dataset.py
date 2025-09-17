@@ -37,9 +37,7 @@ def generate_dataset(input_file: str,
         for chunk in tqdm(chunk_iter, desc='write to split files'):
             # 生成输出文件路径
             output_file = os.path.join(output_dir, f"{prefix}_{chunk_num:04d}.jsonl.gz")
-            with gzip.open(output_file, 'wt', encoding='utf-8') as f:
-                # 保存当前块到新文件
-                chunk.to_json(f,orient="records", lines=True, force_ascii=False)
+            chunk.to_json(f,orient="records", lines=True, force_ascii=False)
             logger.info(f"已生成: {output_file}，包含 {len(chunk)} 行数据")
             chunk_num += 1
 

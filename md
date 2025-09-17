@@ -18,3 +18,15 @@ export DATASET=sharegpt_clean_tr_en_chatbot_ui_history_long-00021,eprstmt-train_
        source-airoboros2.2-category-experience-model_name-none-00036,gpt4_moss-003-Brainstorming-00011,dialog_chatbot_ui_history-00007,\
        chid-train_few_all_50-00005,wiki-all-00059,if_sft_s_v2-3041,alpaca_gpt4_en,alpaca_gpt4_zh,code_alpaca,math,openhermes,codefeedback
 cd /mnt/data-token-cpfs/group-web/wjp/code/sft/app && bash sft.sh
+
+
+ nohup uv run utils/deduplicator.py /work/dclm-baseline/global-shard_01_of_10/ /work/dclm-url-dedup/shard_01 > logs/url_dedup01.log 2>&1 &
+ nohup uv run utils/deduplicator.py /work/dclm-baseline/global-shard_02_of_10/ /work/dclm-url-dedup/shard_02 > logs/url_dedup02.log 2>&1 &
+ nohup uv run utils/deduplicator.py /work/dclm-baseline/global-shard_03_of_10/ /work/dclm-url-dedup/shard_03 > logs/url_dedup03.log 2>&1 &
+ nohup uv run utils/deduplicator.py /work/dclm-baseline/global-shard_04_of_10/ /work/dclm-url-dedup/shard_04 > logs/url_dedup04.log 2>&1 &
+ nohup uv run utils/deduplicator.py /work/dclm-baseline/global-shard_05_of_10/ /work/dclm-url-dedup/shard_05 > logs/url_dedup05.log 2>&1 &
+ nohup uv run utils/deduplicator.py /work/dclm-baseline/global-shard_06_of_10/ /work/dclm-url-dedup/shard_06 > logs/url_dedup06.log 2>&1 &
+ nohup uv run utils/deduplicator.py /work/dclm-baseline/global-shard_07_of_10/ /work/dclm-url-dedup/shard_07 > logs/url_dedup07.log 2>&1 &
+ nohup uv run utils/deduplicator.py /work/dclm-baseline/global-shard_08_of_10/ /work/dclm-url-dedup/shard_08 > logs/url_dedup08.log 2>&1 &
+ nohup uv run utils/deduplicator.py /work/dclm-baseline/global-shard_09_of_10/ /work/dclm-url-dedup/shard_09 > logs/url_dedup09.log 2>&1 &
+ nohup uv run utils/deduplicator.py /work/dclm-baseline/global-shard_10_of_10/ /work/dclm-url-dedup/shard_10 > logs/url_dedup10.log 2>&1 &

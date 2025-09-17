@@ -1,19 +1,12 @@
 import pandas as pd
 import os
-from tqdm import tqdm
 from loguru import logger
-from pandas import DataFrame
 import unidecode
 import re
 from glob import glob
-import zstandard as zstd
-import io
 import tldextract
 import gzip
 import shutil
-
-base_root = '/work'
-base_home='/work/group1/jack'
 
 def compress_existing_file(input_path, output_path):
     """将普通文件压缩为 gzip 格式"""
@@ -27,38 +20,37 @@ def extract_domain(url):
     # 组合主域名和后缀（如 "example" + "com" → "example.com"）
     return extracted.fqdn
 
-def read_file(file: str, format: str = 'csv', is_zstd: bool = False) -> DataFrame:
+def split_list(lst, parts):
     """
-    读取不同格式的文件，支持zstd压缩
+    将列表均匀分割为n个子列表
 
     参数:
-        file: 文件路径
-        format: 文件格式，支持 'csv', 'jsonl', 'parquet'
-        zstd: 是否为zstd压缩文件
-
+        lst: 要分割的原始列表
+        parts: 要分割的子列表数量
     返回:
-        pandas DataFrame
+        包含parts个子列表的列表
     """
-    # 检查文件是否存在
-    if not os.path.isfile(file):
-        raise ValueError(f'输入文件不存在: {file}')
+    # 计算列表长度
+    total = len(lst)
 
-    # 根据文件格式读取数据
-    if format == "csv":
-        if is_zstd:
-            df = pd.read_csv(file, compression='zstd')
-        else:
-            df = pd.read_csv(file)
-    elif format == "jsonl":
-        if is_zstd:
-            df = pd.read_json(file, lines=True, compression='zstd')
-        else:
-            df = pd.read_json(file, lines=True)
-    elif format == "parquet":
-        df = pd.read_parquet(file)
-    else:
-        raise ValueError("仅支持 'csv', 'jsonl' 和 'parquet' 格式")
-    return df
+    # 处理n大于列表长度的情况
+    if parts >= total:
+        return [[item] for item in lst] + [[] for _ in range(parts - total)]
+
+    # 计算基本长度和余数
+    base_size = total // parts
+    remainder = total % parts
+
+    result = []
+    start = 0
+
+    for i in range(parts):
+        # 前remainder个子列表多一个元素
+        end = start + base_size + (1 if i < remainder else 0)
+        result.append(lst[start:end])
+        start = end
+
+    return result
 
 def get_all_files(input_dir: str, suffix: str = '.csv', recursive=False):
     """
@@ -95,34 +87,6 @@ def get_all_files(input_dir: str, suffix: str = '.csv', recursive=False):
     files = glob(pattern, recursive=recursive)
     return [os.path.abspath(file) for file in files]
 
-
-def append_to_csv(file_path, new_data, index=False, **kwargs):
-    """
-    向CSV文件追加数据
-
-    参数:
-        file_path (str): CSV文件路径
-        new_data (pd.DataFrame): 要追加的数据
-        index (bool): 是否写入索引，默认为False
-        **kwargs: 传递给to_csv的其他参数
-    """
-    try:
-        # 检查文件是否存在
-        file_exists = os.path.isfile(file_path)
-
-        # 如果文件存在，不写入表头；否则写入表头
-        new_data.to_csv(
-            file_path,
-            mode='a',
-            header=not file_exists,
-            index=index,** kwargs
-        )
-        logger.info(f"成功向CSV文件追加了 {len(new_data)} 行数据")
-        return True
-    except Exception as e:
-        logger.error(f"追加到CSV时出错: {str(e)}")
-        return False
-
 # 定义清理文本的函数
 def clean_text(text: str):
     if pd.isna(text):
@@ -136,17 +100,3 @@ def clean_text(text: str):
     text =  text if text else ""
 
     return text if len(text.split())>4 else ""  # 用"empty"替代空字符串
-
-# pandas 去除重复行
-def drop_duplicates(input_df: DataFrame, columns=['text']):
-  # 1. 查看重复行数量（可选）
-  logger.info(f"原始数据行数: {len(input_df)}")
-  logger.info(f"重复行数量: {input_df.duplicated(subset=columns).sum()}")
-
-  # 2. 去除重复行
-  # 默认保留第一次出现的行，删除后续重复行
-  df_cleaned = input_df.drop_duplicates(subset=columns)
-
-  # 3. 查看处理后的结果
-  logger.info(f"去重后的数据行数: {len(df_cleaned)}")
-  return df_cleaned

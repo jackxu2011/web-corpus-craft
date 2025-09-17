@@ -190,5 +190,10 @@ def merge_dataset(base_dir):
   logger.info(f'---- duplicated: {duplicated_total} -----')
   logger.info(f'---- remain:{remain_total} -----')
 
-merge_dataset('/work/group1/data/r7_dclm')
+# merge_dataset('/work/group1/data/r7_dclm')
 #merge_csv('/work/group1/data/r7_dclm_r1/shard_05', '/work/group1/data/r7_dclm_r1/shard_05.csv')
+
+def read_zst():
+  df = pd.read_json('result/test/shard_02/shard_00000.jsonl.zst', lines=True)
+  logger.info(df.head())
+read_zst()
