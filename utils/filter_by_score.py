@@ -3,6 +3,7 @@ import os
 from tqdm import tqdm
 import argparse
 import data_util
+import pd_util
 import tldextract
 from loguru import logger
 import sys
@@ -23,12 +24,12 @@ def filter_by_score(input_dir, output_file, low=0, up=5, score_key='traffic_rele
       df = df[(df[score_key]<=up)]
     if low is not None:
       df = df[(df[score_key]>=low)]
-    df = data_util.drop_duplicates(df, columns)
+    df = pd_util.drop_duplicates(df, columns)
     df_array.append(df[columns])
 
   combine_df = pd.concat(df_array, ignore_index=True)
 
-  result = data_util.drop_duplicates(combine_df, columns)
+  result = pd_util.drop_duplicates(combine_df, columns)
 
   result.to_csv(output_file, index=False)
   logger.info(f'分数在[{low},{up}]之间的数据有{len(result)}条！')

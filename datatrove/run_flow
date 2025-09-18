@@ -1,0 +1,25 @@
+export INPUT_ROOT_DIR="/mnt/nas2/public/data/dclm_dequped_subject_language_data/s1=dclm2024/s2=dump33/"
+export OUTPUT_ROOT_DIR="/mnt/nas2/public/data/dclm_dequped_subject_lang"
+export LOGGING_ROOT_DIR="/mnt/nas2/public/logs/lang"
+
+# 运行脚本
+python local_language_and_filter.py
+
+
+
+# 设置环境变量
+export INPUT_ROOT_DIR="/mnt/nas2/public/data/dclm_dequped_subject_lang"  # 包含多个子文件夹的根目录
+export OUTPUT_ROOT_DIR="/mnt/nas2/public/data/dclm_dequped_subject_quality"  # 结果根目录
+export LOGGING_ROOT_DIR="/mnt/nas2/public/logs/quality"  # 可选
+
+# 运行脚本
+python local_filter_quality.py
+
+
+# 设置环境变量
+export INPUT_ROOT_DIR="/mnt/nas2/public/data/dclm_dequped_subject_quality/result" 
+export OUTPUT_ROOT_DIR="/mnt/nas2/public/data/dclm_dequped_subject_dedupe" 
+export LOGGING_ROOT_DIR="/mnt/nas2/public/logs/dedupe"
+
+# 运行脚本
+python local_dedupe_minhash.py

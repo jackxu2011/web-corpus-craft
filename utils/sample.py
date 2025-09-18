@@ -14,7 +14,7 @@ def sample(input_dir: str, output_file: str, sample: int, format: str = 'csv', z
 
     dataframes = []
     for file in tqdm(file_paths, desc="处理文件"):
-        df = data_util.read_file(file, format, zstd)
+        df = pd_util.read_file(file, format, zstd)
         df = df.sample(n=batch_sample)
         df['text'] = df.text.apply(data_util.clean_text)
         df = df[(df['text'] != "")]

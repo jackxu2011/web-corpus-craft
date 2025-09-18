@@ -24,7 +24,7 @@ def merge_datasets(input_dir, output_file, text_key = 'text'):
   combined_df = combined_df[(combined_df[text_key] != "")]
   logger.info(combined_df.info())
   #去除重复行
-  df_cleaned = data_util.drop_duplicates(combined_df)
+  df_cleaned = pd_util.drop_duplicates(combined_df)
 
   df_cleaned.to_csv(output_file, index=False)
   logger.info(f"合并后的数据集数据: {len(df_cleaned)}")

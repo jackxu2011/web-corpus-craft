@@ -20,31 +20,41 @@ def extract_domain(url):
     # 组合主域名和后缀（如 "example" + "com" → "example.com"）
     return extracted.fqdn
 
-def split_list(lst, parts):
+def chunk_list(lst, chunk_size):
+    """
+    将列表 lst 切分成长度为 chunk_size 的子列表。
+
+    :param lst: 要切分的列表
+    :param chunk_size: 每个子列表的期望长度
+    :return: 包含长度为 chunk_size 的子列表的列表
+    """
+    return [lst[i:i + chunk_size] for i in range(0, len(lst), chunk_size)]
+
+def split_list(lst, n):
     """
     将列表均匀分割为n个子列表
 
     参数:
         lst: 要分割的原始列表
-        parts: 要分割的子列表数量
+        n: 要分割的子列表数量
     返回:
-        包含parts个子列表的列表
+        包含n个子列表的列表
     """
     # 计算列表长度
     total = len(lst)
 
     # 处理n大于列表长度的情况
     if parts >= total:
-        return [[item] for item in lst] + [[] for _ in range(parts - total)]
+        return [[item] for item in lst] + [[] for _ in range(n - total)]
 
     # 计算基本长度和余数
-    base_size = total // parts
-    remainder = total % parts
+    base_size = total // n
+    remainder = total % n
 
     result = []
     start = 0
 
-    for i in range(parts):
+    for i in range(n):
         # 前remainder个子列表多一个元素
         end = start + base_size + (1 if i < remainder else 0)
         result.append(lst[start:end])

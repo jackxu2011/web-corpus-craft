@@ -11,7 +11,7 @@ WORKDIR = os.getcwd()
 class FaxtTextTrainer:
   def __init__(self, train_path):
     self.train_path = train_path
-    self.data_path = os.path.join(train_path, "data")
+    self.data_path = os.path.join(train_path, "data/fasttext")
     self.model_path = os.path.join(train_path, "models")
     os.makedirs(self.data_path, exist_ok=True)
     os.makedirs(self.model_path, exist_ok=True)

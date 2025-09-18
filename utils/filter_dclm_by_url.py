@@ -3,6 +3,7 @@ import os
 from tqdm import tqdm
 import argparse
 import data_util
+import pd_util
 import tldextract
 from loguru import logger
 import sys
@@ -25,7 +26,7 @@ def filter_urls(input_dir: str, output_dir: str):
         df['remain'] = df.url.apply(is_in_domains)
         df = df[df['remain']]
         logger.info(f'{file} remain {len(df)} lines')
-        data_util.append_to_csv(os.path.join(output_dir, f'{file_name}.csv'), df[['url','text']])
+        pd_util.append_to_csv(os.path.join(output_dir, f'{file_name}.csv'), df[['url','text']])
 
 # 示例用法
 if __name__ == "__main__":

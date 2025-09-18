@@ -2,7 +2,7 @@ import pandas as pd
 import os
 from tqdm import tqdm
 import argparse
-from utils import data_util
+import data_util
 import tldextract
 
 domains = df.read_csv('domain.csv')['domain'].tolist()

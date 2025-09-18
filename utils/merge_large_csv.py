@@ -4,7 +4,7 @@ from tqdm import tqdm
 import argparse
 import glob
 from loguru import logger
-from data_util import append_to_csv
+from pd_util import append_to_csv
 
 def merge_csv(input_dir, output_file, columns = []):
   # 获取当前目录下所有 .csv 文件的路径

@@ -10,7 +10,6 @@ import sys
 from collections import defaultdict
 from glob import glob
 import argparse
-import data_util
 from dotenv import load_dotenv
 
 load_dotenv()
