@@ -33,5 +33,5 @@ dev = [
 ]
 
 [[tool.uv.index]]
-url = "https://mirrors.aliyun.com/pypi/simple/"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 default = true
