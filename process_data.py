@@ -154,13 +154,18 @@ def cal_url_prop(base_file, all_file, output_file):
 # merge_dataset('/work/group1/data/r7_dclm')
 #merge_csv('/work/group1/data/r7_dclm_r1/shard_05', '/work/group1/data/r7_dclm_r1/shard_05.csv')
 
-def remove_df(input, need_remove):
+def remove_df(input, need_remove, need_clean=True):
   in_df = pd.read_csv(input)
   logger.info(f'read: {input}')
   removed_df = pd.read_csv(need_remove)
-  removed_df['text'] = removed_df.text.apply(data_util.clean_text)
+  if need_clean:
+    logger.info('clean text')
+    removed_df['text'] = removed_df.text.apply(data_util.clean_text)
   logger.info(f'read: {need_remove}')
-  mask = ~in_df["text"].isin(removed_df["text"])
-  logger.info(f'save, removed {len(in_df) - mask.sum()}')
-  in_df[mask].to_csv(input)
-remove_df('data/fasttext/neg/current/r8_neg_base.csv', 'data/fasttext/r8/positive.csv')
+  mask = in_df["text"].isin(removed_df["text"])
+  logger.info(f'save, removed {mask.sum()}')
+  if mask.sum()>0:
+    logger.info('save file')
+    in_df[~mask].to_csv(input)
+remove_df('group_data/score/v1_le_1_r2.csv', 'group_data/fasttext/test/positive.csv',False)
+remove_df('group_data/score/v1_le_1_r2.csv', 'group_data/fasttext/test/positive.csv')

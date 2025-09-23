@@ -157,9 +157,9 @@ def worker(queue, output_file, df, model_name, file_stats):
             # 更新DataFrame评分列
             df.at[index, 'traffic_relevance_score'] = score
 
-            # 每10条记录增量保存（避免数据丢失）
-            if index % 20 == 0 and not df.empty:
-                df.to_csv(output_file, index=False, encoding='utf-8-sig')
+            # 每100条记录增量保存（避免数据丢失）
+            if index % 200 == 0 and not df.empty:
+                df.to_csv(output_file, index=False, encoding='utf-8')
                 logger.info(f"临时保存：{os.path.basename(output_file)}（已处理至索引{index}）")
 
         except Exception as e:

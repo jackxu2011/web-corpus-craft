@@ -13,7 +13,7 @@ from loguru import logger
 # 全局Bloom Filter分片实例列表
 bloom_filters: List[Optional[Bloom]] = []
 # 分片数量
-NUM_SHARDS = 1000
+NUM_SHARDS = 2000
 
 # 数据模型定义
 class AddRequest(BaseModel):
@@ -245,7 +245,7 @@ def main():
     parser = argparse.ArgumentParser(description="分布式Bloom Filter服务")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="服务绑定地址")
     parser.add_argument("--port", type=int, default=8000, help="服务端口")
-    parser.add_argument("--capacity", type=int, default=5_000_000, help="每个分片的初始容量")
+    parser.add_argument("--capacity", type=int, default=2_000_000, help="每个分片的初始容量")
     parser.add_argument("--error_rate", type=float, default=0.001, help="允许的误判率")
     parser.add_argument("--save_path", type=str, default="tmp/bloom_filter.dat", help="Bloom Filter分片的基础保存路径")
     parser.add_argument("--save_interval", type=int, default=0, help="定期保存间隔(秒)，0表示不自动保存")

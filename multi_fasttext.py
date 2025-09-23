@@ -105,13 +105,13 @@ def append_to_csv(file_path, new_data, index=False, **kwargs):
 
 def main(model, input_json, output_dir='data/result', num_threads=20):
 
-    logger.info(f"[INFO] Loading texts from: {input_json}")
+    logger.info(f"Loading texts from: {input_json}")
 
     file_name = os.path.splitext(os.path.basename(input_json))[0]
 
     texts_df = load_texts_from_jsonl(input_json)
     length = len(texts_df)
-    logger.info(f"[INFO] Loaded {length} samples for inference.")
+    logger.info(f"Loaded {length} samples for inference.")
 
     if length > 0:
         total_time, result_df = run_inference_mt(model, texts_df)

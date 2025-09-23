@@ -57,7 +57,7 @@ class FaxtTextTrainer:
     # 模型配置参数
     config = {
       'input': os.path.join(self.data_path, f'r{round}/train.txt'),  # 训练数据路径
-      'vector_dim': 128,        # 词向量维度
+      'vector_dim': 256,        # 词向量维度
       'lr': 0.1,               # 学习率
       'word_ngrams': 3,        # 最大n-gram长度
       'min_count': 3,          # 最小词频阈值
@@ -213,7 +213,7 @@ class FaxtTextTrainer:
 if __name__ == "__main__":
   # 训练流程
   trainer = FaxtTextTrainer(train_path=WORKDIR)  # 初始化训练器
-  train_iter = 8
+  train_iter = 10
   trainer.split_data(round=train_iter)
   trainer.train(round=train_iter)
   trainer.test(f'r{train_iter}/val.txt', round=train_iter)

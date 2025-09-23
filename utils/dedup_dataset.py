@@ -60,7 +60,7 @@ class Deduplicator:
                  bloom_service_url=DEFAULT_BLOOM_SERVICE_URL, text_key='text'):
         self.output_dir = output_dir
         self.target_rows = target_rows
-        self.dedup_cols = dedup_cols or ['url']
+        self.dedup_cols = dedup_cols or ['url', 'text']
         self.bloom_service_url = bloom_service_url.rstrip("/")  # 统一 URL 格式（去掉末尾/）
         self.text_key = text_key
         self.chunksize=chunksize
@@ -267,7 +267,7 @@ if __name__ == "__main__":
     parser.add_argument("input_dir", type=str, help="输入文件目录")
     parser.add_argument("output_dir", type=str, help="输出文件目录")
     parser.add_argument("--dedup_cols", type=str, default=['url'], nargs='*', help="去重列")
-    parser.add_argument("--target_rows", type=int, default=90_000, help="每个输出文件目标行数")
+    parser.add_argument("--target_rows", type=int, default=100_000, help="每个输出文件目标行数")
     parser.add_argument("--bloom-service-url", type=str, default=DEFAULT_BLOOM_SERVICE_URL,
                         help=f"Bloom Filter 服务地址（默认：{DEFAULT_BLOOM_SERVICE_URL}）")
     args = parser.parse_args()
