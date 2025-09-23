@@ -3,25 +3,27 @@ import os
 from tqdm import tqdm
 import argparse
 import data_util
+import pd_util
 import tldextract
 from loguru import logger
 import sys
 
 def sample(input_dir: str, output_file: str, sample: int, format: str = 'csv', zstd: bool = False):
-    file_paths = data_util.get_all_files(input_dir)
+    file_paths = data_util.get_all_files(input_dir, suffix= '.zstd' if zstd else '.csv')
 
     batch_sample = min(sample//len(file_paths) + 20, sample + 20)
 
     dataframes = []
     for file in tqdm(file_paths, desc="处理文件"):
-        df = pd_util.read_file(file, format, zstd)
+        df = pd_util.read_file(file, format, 'zstd' if zstd else 'infer')
         df = df.sample(n=batch_sample)
         df['text'] = df.text.apply(data_util.clean_text)
         df = df[(df['text'] != "")]
         dataframes.append(df.dropna(subset=['text']))
 
     combined_df = pd.concat(dataframes, ignore_index=True)
-    result = combined_df.sample(n=sample)
+
+    result = combined_df.sample(n=sample) if len(combined_df) >sample else combined_df
 
     logger.info(result.info())
     result['text'].to_csv(f'{output_file}', index=False)

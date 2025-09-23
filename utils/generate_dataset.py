@@ -17,7 +17,6 @@ def generate_dataset(input_file: str,
         output_dir: 输出目录
         chunk_size: 每个文件的行数，默认150000
         prefix: 输出文件前缀
-        file_format: 保存格式，支持"jsonl","csv"或"parquet"（parquet更高效）
     """
     try:
         if not os.path.isfile(input_file):

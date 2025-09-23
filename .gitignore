@@ -10,3 +10,4 @@ uv.lock
 .env
 group_data
 __pycache__
+tmp/

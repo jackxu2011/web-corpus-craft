@@ -8,11 +8,28 @@ import tldextract
 import gzip
 import shutil
 
-def compress_existing_file(input_path, output_path):
-    """将普通文件压缩为 gzip 格式"""
-    with open(input_path, 'rb') as f_in:  # 读取原始文件（二进制模式）
-        with gzip.open(output_path, 'wb') as f_out:  # 写入压缩文件
+def gzip_file(input_file, output_file):
+    """
+    将普通文件压缩为 gzip 格式
+    参数:
+        input_file: 需要压缩的文件路径
+        output_file: 压缩后的文件路径
+    """
+    with open(input_file, 'rb') as f_in:  # 读取原始文件（二进制模式）
+        with gzip.open(output_file, 'wb') as f_out:  # 写入压缩文件
             shutil.copyfileobj(f_in, f_out)  # 高效复制数据
+
+def gunzip_file(gz_file, output_file):
+    """
+    解压gzip文件
+
+    参数:
+        gz_file: gzip压缩文件路径
+        output_file: 解压后的文件路径
+    """
+    with gzip.open(gz_file, 'rb') as f_in:
+        with open(output_file, 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
 
 def extract_domain(url):
     # 提取主域名（自动识别公共后缀如 .com、.co.uk）

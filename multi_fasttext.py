@@ -1,5 +1,5 @@
 import sys
-# sys.path.insert(0, "/work/fastText/build/lib.linux-x86_64-cpython-310")
+sys.path.insert(0, "/work/fastText/build/lib.linux-x86_64-cpython-310")
 
 import os
 import time
@@ -40,10 +40,10 @@ def load_texts_from_json(json_path, text_key="text", max_lines=None):
 def load_texts_from_jsonl(json_path, text_key="text", max_lines=None):
     df = pd.DataFrame()
     try:
-        df = pd.read_json(json_path, compression='zstd', lines=True, on_bad_lines="skip")
+        df = pd.read_json(json_path, compression='zstd', lines=True)
         if text_key in df.columns:
             df.loc[:, text_key] = df[text_key].apply(lambda x: x.replace('\n', ' '))
-            df = df[(df[text_key].str.len() < 100000) & (df[text_key].str.len() > 100)]
+            # df = df[(df[text_key].str.len() < 100000) & (df[text_key].str.len() > 20)]
     except Exception as e:
         logger.error(f"读取文件 {file} 时发生错误: {str(e)}")
         with open('logs/failed_file.log', 'a', encoding='utf-8') as f:
@@ -109,7 +109,7 @@ def main(model, input_json, output_dir='data/result', num_threads=20):
 
     file_name = os.path.splitext(os.path.basename(input_json))[0]
 
-    texts_df = load_texts_from_jsonl(input_json, text_key)
+    texts_df = load_texts_from_jsonl(input_json)
     length = len(texts_df)
     logger.info(f"[INFO] Loaded {length} samples for inference.")
 

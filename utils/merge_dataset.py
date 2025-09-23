@@ -4,6 +4,8 @@ from tqdm import tqdm
 import argparse
 import glob
 from loguru import logger
+import data_util
+import pd_util
 
 def merge_datasets(input_dir, output_file, text_key = 'text'):
   # 获取当前目录下所有 .csv 文件的路径
@@ -13,6 +15,7 @@ def merge_datasets(input_dir, output_file, text_key = 'text'):
   dataframes = []
   for file in tqdm(file_paths, desc='读取文件'):
       df = pd.read_csv(file)
+      df = pd_util.str_length_filter(df, text_key=text_key)
       dataframes.append(df[[text_key]])
 
   # 合并所有 DataFrame
@@ -20,7 +23,7 @@ def merge_datasets(input_dir, output_file, text_key = 'text'):
   combined_df = pd.concat(dataframes, ignore_index=True)
 
   logger.info('begin clean text')
-  combined_df[text_key] = combined_df[text_key].apply(data_util.clean_text)
+  combined_df.loc[: ,text_key] = combined_df[text_key].apply(data_util.clean_text)
   combined_df = combined_df[(combined_df[text_key] != "")]
   logger.info(combined_df.info())
   #去除重复行

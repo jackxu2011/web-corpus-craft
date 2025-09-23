@@ -14,7 +14,7 @@ from datatrove.pipeline.filters import (
 from datatrove.pipeline.readers import JsonlReader
 from datatrove.pipeline.writers.jsonl import JsonlWriter
 
-def process_single_folder(input_folder, output_folder, logging_dir):
+def process_single_folder(input_folder, glob_pattern, output_folder, logging_dir):
     """处理单个文件夹的函数"""
     # 获取当前处理的文件夹名称（用于输出路径）
     folder_name = os.path.basename(input_folder.rstrip('/'))
@@ -26,7 +26,7 @@ def process_single_folder(input_folder, output_folder, logging_dir):
     os.makedirs(os.path.join(output_folder, 'result'), exist_ok=True)
 
     # 检测输入文件夹中的JSONL文件数量
-    jsonl_files = glob(f"{input_folder}/*.jsonl.gz")
+    jsonl_files = glob(os.path.join(input_folder,"**", glob_pattern) , recursive=True)
     n_job = len(jsonl_files)
 
     if n_job == 0:

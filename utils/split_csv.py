@@ -5,7 +5,7 @@ import argparse
 import gzip
 
 def split_csv(input_file: str,
-              output_dir: str,
+              output_dir: str | None = None,
               prefix: str = "data",
               chunk_size: int= 50000,
               file_format="jsonl",
@@ -23,8 +23,11 @@ def split_csv(input_file: str,
     try:
         # 获取文件名和扩展名
         file_name, file_ext = os.path.splitext(os.path.basename(input_file))
-        # 创建输出目录
-        os.makedirs(output_dir, exist_ok=True)
+        if not output_dir:
+            output_dir = os.path.dirname(input_file)
+        else:
+            # 创建输出目录
+            os.makedirs(output_dir, exist_ok=True)
 
         # 分块读取CSV文件
         chunk_iter = pd.read_csv(input_file, chunksize=chunk_size)
@@ -71,7 +74,7 @@ def split_csv(input_file: str,
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input_file", type=str)
-    parser.add_argument("output_dir", type=str)
+    parser.add_argument("--output_dir", type=str, default=None)
     parser.add_argument("--prefix", type=str, default="data")
     parser.add_argument("--size", type=int, default=50000, help="Size of rows for splited files")
     parser.add_argument("--format", type=str, default="csv", help="Save format for splited files")

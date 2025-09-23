@@ -1,9 +1,17 @@
-import pandas as pd
+import sys
 import os
+
+# 将项目根目录添加到系统路径
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+import pandas as pd
 from tqdm import tqdm
 import argparse
 import glob
 from loguru import logger
+from pd_util import drop_duplicates
 
 def merge_csv(input_dir, output_file, columns = [], text_key='text'):
   # 获取当前目录下所有 .csv 文件的路径

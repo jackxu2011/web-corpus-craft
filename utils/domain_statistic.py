@@ -1,12 +1,20 @@
-import pandas as pd
+import sys
 import os
+
+# 将项目根目录添加到系统路径
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+import pandas as pd
 import hashlib
 from tqdm import tqdm
 from loguru import logger
 import argparse
 from data_util import extract_domain
+from data_util import get_all_files
 
-def domain_statistic(
+def domain_statistic_for_file(
     input_file,
     output_file,
     chunksize=5_000_000
@@ -65,14 +73,51 @@ def domain_statistic(
     logger.info(f"唯一domain数: {len(df_sum):,}")
     logger.info(f"结果已保存至: {output_file}")
 
+def domain_statistic_for_dir(
+    input_dir,
+    output_file
+):
+    logger.info('get file list')
+    files = get_all_files(input_dir, recursive=True)
+    dfs = []
+    for index, file in tqdm(enumerate(files), total=len(files), desc='deal files'):
+        df = pd.read_csv(file)
+        dfs.append(df)
+        if (index+1)%1000 == 0:
+            cat_df = pd.concat(dfs, ignore_index=True)
+            df_sum = cat_df.groupby('domain')['count'].sum().reset_index()
+            dfs=[df_sum]
+            logger.info(f'have domain: {len(df_sum)}')
+
+    if len(dfs) > 1:
+        concated_df = pd.concat(dfs, ignore_index=True)
+    else:
+        concated_df = dfs[0]
+    df_sum = concated_df.groupby('domain')['count'].sum().reset_index()
+    logger.info(df_sum.head())
+    logger.info(f'共有domain数据：{len(df_sum)}')
+    # 排序
+    sorted_url = df_sum.sort_values(by='count', ascending=False)
+
+    # 保存处理后的结果到新的 CSV 文件
+    logger.info(f'保存数据')
+    sorted_url.to_csv(f'{output_file}', index=False)  # index=False 表示不保存索引列
+    logger.info(sorted_url.head())
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("input_file", type=str)
+    parser.add_argument("input_dir", type=str)
     parser.add_argument("output_file", type=str)
     parser.add_argument("--chunksize", type=int, default=5_000_000)
     args = parser.parse_args()
-    domain_statistic(
-        input_file=args.input_file,
-        output_file=args.output_file,
-        chunksize=args.chunksize
-    )
+    if os.path.isfile(args.input_dir):
+        domain_statistic_for_file(
+            input_file=args.input_dir,
+            output_file=args.output_file,
+            chunksize=args.chunksize
+        )
+    else:
+        domain_statistic_for_dir(
+            input_dir=args.input_dir,
+            output_file=args.output_file
+        )

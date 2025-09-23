@@ -19,6 +19,10 @@ class FaxtTextTrainer:
   def split_data(self, pos_file='positive.csv', neg_file='negative.csv', round=1, val=0.2):
     pos_df = pd.read_csv(os.path.join(self.data_path, f'r{round}/{pos_file}'))
     neg_df = pd.read_csv(os.path.join(self.data_path, f'r{round}/{neg_file}'))
+    mask = neg_df["text"].isin(pos_df["text"])
+    logger.info(f'there {mask.sum()} recode in both neg_df and pos_df')
+    if mask.sum() > 0:
+      neg_df = neg_df[~mask]
     # 合并正负样本
     data_X = pd.concat((pos_df['text'], neg_df['text']))
     # 创建标签：正样本为1，负样本为0
@@ -53,11 +57,11 @@ class FaxtTextTrainer:
     # 模型配置参数
     config = {
       'input': os.path.join(self.data_path, f'r{round}/train.txt'),  # 训练数据路径
-      'vector_dim': 64,        # 词向量维度
-      'lr': 0.8,               # 学习率
+      'vector_dim': 128,        # 词向量维度
+      'lr': 0.1,               # 学习率
       'word_ngrams': 3,        # 最大n-gram长度
       'min_count': 3,          # 最小词频阈值
-      'epoch': 50,              # 训练轮数
+      'epoch': 5,              # 训练轮数
     }
 
     # 训练监督模型
@@ -209,9 +213,9 @@ class FaxtTextTrainer:
 if __name__ == "__main__":
   # 训练流程
   trainer = FaxtTextTrainer(train_path=WORKDIR)  # 初始化训练器
-  train_iter = 7
+  train_iter = 8
   trainer.split_data(round=train_iter)
   trainer.train(round=train_iter)
   trainer.test(f'r{train_iter}/val.txt', round=train_iter)
   trainer.predict_test(f'r{train_iter}/val.txt', round=train_iter)
-  trainer.inference('test_negative_500000.csv', 'test_neg_result', round=train_iter)
+  trainer.inference('test_negative_500k.csv', 'test_neg_result', round=train_iter)

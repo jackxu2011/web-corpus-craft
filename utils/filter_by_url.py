@@ -19,8 +19,7 @@ def split_csv(input_dir: str, output_file: str):
         df['remain'] = df.url.apply(filter_url)
         df = df[df['remain']]
         df_array.append(df[['url','text']])
-    result = pd.concat(df_array, , ignore_index=True)
-
+    result = pd.concat(df_array, ignore_index=True)
 
 
 # 示例用法

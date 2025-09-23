@@ -7,12 +7,13 @@ from glob import glob
 import zstandard as zstd
 import hashlib
 
-def generate_record_hash(record, cols=None):
+def generate_record_hash(record, cols=None, length=8):
     """生成记录的哈希值（用于快速判断重复）"""
     if cols:
         record = record[cols]
     str_repr = '|'.join(map(str, record.values)).encode('utf-8')
-    return hashlib.md5(str_repr).hexdigest()
+    blake_hash = hashlib.blake2b(str_repr, digest_size=length).digest()
+    return blake_hash.hex()
 
 def read_file(file: str, format: str = 'csv', compression: str = 'infer') -> DataFrame:
     """
@@ -83,3 +84,12 @@ def drop_duplicates(input_df: DataFrame, columns=['text']):
   # 3. 查看处理后的结果
   logger.info(f"去重后的数据行数: {len(df_cleaned)}")
   return df_cleaned
+
+def str_length_filter(df: DataFrame, min: int = 20, max: int = 100_000, text_key: str = 'text'):
+    logger.info(f"原始数据行数: {len(df)}")
+      # 过滤过短/过长文本
+    mask = (df[text_key].str.len() <= max) & (df[text_key].str.len() >= min)
+
+    logger.info(f"过滤短/长文本行数: {len(df) - mask.sum()}")
+    logger.info(f"过滤后行数: {mask.sum()}")
+    return df[mask]
