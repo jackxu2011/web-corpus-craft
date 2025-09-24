@@ -7,13 +7,13 @@ from glob import glob
 import zstandard as zstd
 import hashlib
 
-def generate_record_hash(record, cols=None, length=8):
+def generate_record_hash(record, cols=None):
     """生成记录的哈希值（用于快速判断重复）"""
     if cols:
         record = record[cols]
     str_repr = '|'.join(map(str, record.values)).encode('utf-8')
-    blake_hash = hashlib.blake2b(str_repr, digest_size=length).digest()
-    return blake_hash.hex()
+    blake_hash = hashlib.blake2b(str_repr)
+    return blake_hash.hexdigest()
 
 def read_file(file: str, format: str = 'csv', compression: str = 'infer') -> DataFrame:
     """
