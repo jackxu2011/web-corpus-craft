@@ -8,7 +8,8 @@ from loguru import logger
 def generate_dataset(input_file: str,
               output_dir: str,
               prefix: str = "data",
-              chunk_size: int= 150000):
+              chunk_size: int= 150000,
+              gziped: bool=False):
     """
     将CSV文件分割成多个小文件，每个文件包含指定数量的行
 
@@ -32,11 +33,12 @@ def generate_dataset(input_file: str,
 
         # 计数器，用于命名输出文件
         chunk_num = 1
-
+        output_ext = 'jsonl.gz' if gziped else 'jsonl'
         for chunk in tqdm(chunk_iter, desc='write to split files'):
             # 生成输出文件路径
-            output_file = os.path.join(output_dir, f"{prefix}_{chunk_num:04d}.jsonl.gz")
-            chunk.to_json(f,orient="records", lines=True, force_ascii=False)
+
+            output_file = os.path.join(output_dir, f"{prefix}_{chunk_num:04d}.{output_ext}")
+            chunk.to_json(output_file, orient="records", lines=True, force_ascii=False)
             logger.info(f"已生成: {output_file}，包含 {len(chunk)} 行数据")
             chunk_num += 1
 
@@ -54,5 +56,6 @@ if __name__ == "__main__":
     parser.add_argument("output_dir", type=str)
     parser.add_argument("--prefix", type=str, default="data")
     parser.add_argument("--size", type=int, default=150000, help="Size of rows for splited files")
+    parser.add_argument("--gziped" type=bool default=False)
     args = parser.parse_args()
-    generate_dataset(args.input_file, args.output_dir, args.prefix, args.size)
+    generate_dataset(args.input_file, args.output_dir, args.prefix, args.size, args.gziped)

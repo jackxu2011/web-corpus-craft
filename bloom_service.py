@@ -141,20 +141,13 @@ async def add_elements(request: AddRequest):
     if not request.elements:
         return {"message": "未提供元素"}
 
-    # 统计各分片添加的元素数量
-    shard_counts = [0] * NUM_SHARDS
-
     # 批量添加元素到对应的分片
     try:
         for elem in request.elements:
             shard_idx = get_shard_index(elem)
             bloom_filters[shard_idx].add(elem)
-            shard_counts[shard_idx] += 1
-
-        # 找出有数据的分片
-        active_shards = sum(1 for count in shard_counts if count > 0)
         return {
-            "message": f"成功添加 {len(request.elements)} 个元素，分布在 {active_shards} 个分片中"
+            "message": f"成功添加 {len(request.elements)} 个元素"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"添加元素失败: {str(e)}")
@@ -245,7 +238,7 @@ def main():
     parser = argparse.ArgumentParser(description="分布式Bloom Filter服务")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="服务绑定地址")
     parser.add_argument("--port", type=int, default=8000, help="服务端口")
-    parser.add_argument("--capacity", type=int, default=2_000_000, help="每个分片的初始容量")
+    parser.add_argument("--capacity", type=int, default=1_000_000, help="每个分片的初始容量")
     parser.add_argument("--error_rate", type=float, default=0.001, help="允许的误判率")
     parser.add_argument("--save_path", type=str, default="tmp/bloom_filter.dat", help="Bloom Filter分片的基础保存路径")
     parser.add_argument("--save_interval", type=int, default=0, help="定期保存间隔(秒)，0表示不自动保存")

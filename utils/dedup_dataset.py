@@ -56,7 +56,7 @@ def send_bloom_request(url, data, retry=RETRY_TIMES):
 
 # -------------------------- 去重核心类 --------------------------
 class Deduplicator:
-    def __init__(self, output_dir, target_rows=100_000, dedup_cols=None, chunksize=10_000,
+    def __init__(self, output_dir, target_rows=100_000, dedup_cols=None, chunksize=5_000,
                  bloom_service_url=DEFAULT_BLOOM_SERVICE_URL, text_key='text'):
         self.output_dir = output_dir
         self.target_rows = target_rows

@@ -154,7 +154,7 @@ def cal_url_prop(base_file, all_file, output_file):
 # merge_dataset('/work/group1/data/r7_dclm')
 #merge_csv('/work/group1/data/r7_dclm_r1/shard_05', '/work/group1/data/r7_dclm_r1/shard_05.csv')
 
-def remove_df(input, need_remove, need_clean=True):
+def remove_df(input, need_remove, need_clean=False):
   in_df = pd.read_csv(input)
   logger.info(f'read: {input}')
   removed_df = pd.read_csv(need_remove)
@@ -167,5 +167,6 @@ def remove_df(input, need_remove, need_clean=True):
   if mask.sum()>0:
     logger.info('save file')
     in_df[~mask].to_csv(input)
-remove_df('group_data/score/v1_le_1_r2.csv', 'group_data/fasttext/test/positive.csv',False)
-remove_df('group_data/score/v1_le_1_r2.csv', 'group_data/fasttext/test/positive.csv')
+remove_df('data/fasttext/v2/pos/base/positive.csv', 'data/fasttext/v2/fst/neg_ge_3.csv')
+# remove_df('data/fasttext/v2/neg/base/negative.csv', 'data/fasttext/v2/pos/base/positive.csv')
+# remove_df('data/fasttext/v2/neg_llm//positive.csv', 'data/fasttext/v1/pos/long/r9.csv', True)

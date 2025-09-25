@@ -112,7 +112,7 @@ class FaxtTextTrainer:
 
     pos_df = pd.DataFrame(pos_result)
 
-    neg_df.to_csv(os.path.join(self.data_path, f'r{round}/neg_{out_file}.csv'), index=False)
+    # neg_df.to_csv(os.path.join(self.data_path, f'r{round}/neg_{out_file}.csv'), index=False)
 
     pos_df.to_csv(os.path.join(self.data_path, f'r{round}/pos_{out_file}_0.9.csv'), index=False)
 
@@ -213,9 +213,9 @@ class FaxtTextTrainer:
 if __name__ == "__main__":
   # 训练流程
   trainer = FaxtTextTrainer(train_path=WORKDIR)  # 初始化训练器
-  train_iter = 10
+  train_iter = 11
   trainer.split_data(round=train_iter)
   trainer.train(round=train_iter)
   trainer.test(f'r{train_iter}/val.txt', round=train_iter)
   trainer.predict_test(f'r{train_iter}/val.txt', round=train_iter)
-  trainer.inference('test_negative_500k.csv', 'test_neg_result', round=train_iter)
+  trainer.inference('test_pool_500k.csv', 'test_pool_500k', round=train_iter)
