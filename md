@@ -31,13 +31,13 @@ cd /mnt/data-token-cpfs/group-web/wjp/code/sft/app && bash sft.sh
  nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_09_of_10/ /work/dclm-dedup2/shard_09 > logs/text/dedup09.log 2>&1 &
  nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_10_of_10/ /work/dclm-dedup2/shard_10 > logs/text/dedup10.log 2>&1 &
 
-nohup uv run utils/extract_dclm_domain.py /work/dclm-url-dedup/shard_01 /work/dclm-domain-dedup/shard_01 >logs/domain/01.log 2>&1 &
-nohup uv run utils/extract_dclm_domain.py /work/dclm-url-dedup/shard_02 /work/dclm-domain-dedup/shard_02 >logs/domain/02.log 2>&1 &
-nohup uv run utils/extract_dclm_domain.py /work/dclm-url-dedup/shard_03 /work/dclm-domain-dedup/shard_03 >logs/domain/03.log 2>&1 &
-nohup uv run utils/extract_dclm_domain.py /work/dclm-url-dedup/shard_04 /work/dclm-domain-dedup/shard_04 >logs/domain/04.log 2>&1 &
-nohup uv run utils/extract_dclm_domain.py /work/dclm-url-dedup/shard_05 /work/dclm-domain-dedup/shard_05 >logs/domain/05.log 2>&1 &
-nohup uv run utils/extract_dclm_domain.py /work/dclm-url-dedup/shard_06 /work/dclm-domain-dedup/shard_06 >logs/domain/06.log 2>&1 &
-nohup uv run utils/extract_dclm_domain.py /work/dclm-url-dedup/shard_07 /work/dclm-domain-dedup/shard_07 >logs/domain/07.log 2>&1 &
-nohup uv run utils/extract_dclm_domain.py /work/dclm-url-dedup/shard_08 /work/dclm-domain-dedup/shard_08 >logs/domain/08.log 2>&1 &
-nohup uv run utils/extract_dclm_domain.py /work/dclm-url-dedup/shard_09 /work/dclm-domain-dedup/shard_09 >logs/domain/09.log 2>&1 &
-nohup uv run utils/extract_dclm_domain.py /work/dclm-url-dedup/shard_10 /work/dclm-domain-dedup/shard_10 >logs/domain/10.log 2>&1 &
+nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_01 /work/dclm-dedup-domain/shard_01 >logs/domain/01.log 2>&1 &
+nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_02 /work/dclm-dedup-domain/shard_02 >logs/domain/02.log 2>&1 &
+nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_03 /work/dclm-dedup-domain/shard_03 >logs/domain/03.log 2>&1 &
+nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_04 /work/dclm-dedup-domain/shard_04 >logs/domain/04.log 2>&1 &
+nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_05 /work/dclm-dedup-domain/shard_05 >logs/domain/05.log 2>&1 &
+nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_06 /work/dclm-dedup-domain/shard_06 >logs/domain/06.log 2>&1 &
+nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_07 /work/dclm-dedup-domain/shard_07 >logs/domain/07.log 2>&1 &
+nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_08 /work/dclm-dedup-domain/shard_08 >logs/domain/08.log 2>&1 &
+nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_09 /work/dclm-dedup-domain/shard_09 >logs/domain/09.log 2>&1 &
+nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_10 /work/dclm-dedup-domain/shard_10 >logs/domain/10.log 2>&1 &

@@ -11,9 +11,10 @@ def extract_domain(input_dir: str, output_dir: str):
     files = data_util.get_all_files(input_dir, suffix='.zst', recursive=True)
     df_array=[]
     for file in tqdm(files, desc="deal files"):
-        output_dir = os.path.dirname(file).replace('dclm-url-dedup', 'dclm-domain-dedup')
         file_name = os.path.splitext(os.path.basename(file))[0]
-        output_file = f'{output_dir}/{file_name}.csv'
+        output_file_dir = os.path.dirname(file).replace(input_dir, output_dir)
+        os.makedirs(output_file_dir, exist_ok=True)
+        output_file = f'{output_file_dir}/{file_name}.csv'
         if os.path.exists(output_file):
             logger.info(f'{file} have been dealed')
             continue
@@ -29,8 +30,6 @@ def extract_domain(input_dir: str, output_dir: str):
         df['domain'] = df.url.apply(data_util.extract_domain)
         group_domain = df.groupby('domain').size().reset_index(name='count')
         logger.info(f'{file} has {len(group_domain)} domain')
-        output_dir = os.path.dirname(file).replace('dclm-url-dedup', 'dclm-domain-dedup')
-        os.makedirs(output_dir, exist_ok=True)
         group_domain.to_csv(output_file, index=False)
 
 # 示例用法
