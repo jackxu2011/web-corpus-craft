@@ -1,6 +1,7 @@
 data
 result
 models
+opencompass
 mid/
 logs/
 llm/

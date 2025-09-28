@@ -20,16 +20,16 @@ export DATASET=sharegpt_clean_tr_en_chatbot_ui_history_long-00021,eprstmt-train_
 cd /mnt/data-token-cpfs/group-web/wjp/code/sft/app && bash sft.sh
 
 
- nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_01_of_10/ /work/dclm-dedup2/shard_01 > logs/text/dedup01.log 2>&1 &
- nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_02_of_10/ /work/dclm-dedup2/shard_02 > logs/text/dedup02.log 2>&1 &
- nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_03_of_10/ /work/dclm-dedup2/shard_03 > logs/text/dedup03.log 2>&1 &
- nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_04_of_10/ /work/dclm-dedup2/shard_04 > logs/text/dedup04.log 2>&1 &
- nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_05_of_10/ /work/dclm-dedup2/shard_05 > logs/text/dedup05.log 2>&1 &
- nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_06_of_10/ /work/dclm-dedup2/shard_06 > logs/text/dedup06.log 2>&1 &
- nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_07_of_10/ /work/dclm-dedup2/shard_07 > logs/text/dedup07.log 2>&1 &
- nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_08_of_10/ /work/dclm-dedup2/shard_08 > logs/text/dedup08.log 2>&1 &
- nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_09_of_10/ /work/dclm-dedup2/shard_09 > logs/text/dedup09.log 2>&1 &
- nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_10_of_10/ /work/dclm-dedup2/shard_10 > logs/text/dedup10.log 2>&1 &
+nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_01_of_10/ /work/dclm-dedup2/shard_01 > logs/text/dedup01.log 2>&1 &
+nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_02_of_10/ /work/dclm-dedup2/shard_02 > logs/text/dedup02.log 2>&1 &
+nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_03_of_10/ /work/dclm-dedup2/shard_03 > logs/text/dedup03.log 2>&1 &
+nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_04_of_10/ /work/dclm-dedup2/shard_04 > logs/text/dedup04.log 2>&1 &
+nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_05_of_10/ /work/dclm-dedup2/shard_05 > logs/text/dedup05.log 2>&1 &
+nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_06_of_10/ /work/dclm-dedup2/shard_06 > logs/text/dedup06.log 2>&1 &
+nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_07_of_10/ /work/dclm-dedup2/shard_07 > logs/text/dedup07.log 2>&1 &
+nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_08_of_10/ /work/dclm-dedup2/shard_08 > logs/text/dedup08.log 2>&1 &
+nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_09_of_10/ /work/dclm-dedup2/shard_09 > logs/text/dedup09.log 2>&1 &
+nohup uv run utils/dedup_dataset.py /work/dclm-baseline/global-shard_10_of_10/ /work/dclm-dedup2/shard_10 > logs/text/dedup10.log 2>&1 &
 
 nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_01 /work/dclm-dedup-domain/shard_01 >logs/domain/01.log 2>&1 &
 nohup uv run utils/extract_dclm_domain.py /work/dclm-dedup/shard_02 /work/dclm-dedup-domain/shard_02 >logs/domain/02.log 2>&1 &
