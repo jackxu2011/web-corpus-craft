@@ -1,12 +1,15 @@
 from sklearn.model_selection import train_test_split
 import pandas as pd
 import os
+from pathlib import Path
 import fasttext
 import time
 from tqdm import tqdm
 from loguru import logger
 
-WORKDIR = os.getcwd()
+WORKDIR = Path(__file__).resolve().parent.parent
+
+logger.info(f'workdir: {WORKDIR}')
 
 class FaxtTextTrainer:
   def __init__(self, train_path):
@@ -213,9 +216,9 @@ class FaxtTextTrainer:
 if __name__ == "__main__":
   # 训练流程
   trainer = FaxtTextTrainer(train_path=WORKDIR)  # 初始化训练器
-  train_iter = 11
+  train_iter = 13
   trainer.split_data(round=train_iter)
   trainer.train(round=train_iter)
   trainer.test(f'r{train_iter}/val.txt', round=train_iter)
   trainer.predict_test(f'r{train_iter}/val.txt', round=train_iter)
-  trainer.inference('test_pool_500k.csv', 'test_pool_500k', round=train_iter)
+  trainer.inference('test_pool_500k.csv', 'test_pool', round=train_iter)

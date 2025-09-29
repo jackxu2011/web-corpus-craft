@@ -1,11 +1,11 @@
 import sys
-import os
+from pathlib import Path
 
 # 将项目根目录添加到系统路径
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
+parent_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, parent_dir)
 
+import os
 import pandas as pd
 from loguru import logger
 import argparse

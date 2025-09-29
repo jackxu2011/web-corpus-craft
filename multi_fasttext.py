@@ -9,32 +9,9 @@ import fasttext
 import pandas as pd
 from tqdm import tqdm
 from glob import glob
-import logging
-
-# 配置日志（实时控制台输出，格式简洁）
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logging.StreamHandler(sys.stdout)]
-)
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 logger.info(f"fasttext loaded from: {fasttext.__file__}")
-
-# 加载文本
-def load_texts_from_json(json_path, text_key="text", max_lines=None):
-    texts = []
-    with open(json_path, 'r', encoding='utf-8') as f:
-        for i, line in enumerate(f):
-            try:
-                data = json.loads(line)
-                if text_key in data:
-                    texts.append(data[text_key].replace('\n', ' '))
-            except json.JSONDecodeError:
-                continue
-            if max_lines and len(texts) >= max_lines:
-                break
-    return texts
 
 # 加载文本
 def load_texts_from_jsonl(json_path, text_key="text", max_lines=None):
@@ -43,7 +20,6 @@ def load_texts_from_jsonl(json_path, text_key="text", max_lines=None):
         df = pd.read_json(json_path, compression='zstd', lines=True)
         if text_key in df.columns:
             df.loc[:, text_key] = df[text_key].apply(lambda x: x.replace('\n', ' '))
-            # df = df[(df[text_key].str.len() < 100000) & (df[text_key].str.len() > 20)]
     except Exception as e:
         logger.error(f"读取文件 {file} 时发生错误: {str(e)}")
         with open('logs/failed_file.log', 'a', encoding='utf-8') as f:

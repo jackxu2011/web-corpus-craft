@@ -167,6 +167,7 @@ def remove_df(input, need_remove, need_clean=False):
   if mask.sum()>0:
     logger.info('save file')
     in_df[~mask].to_csv(input)
-remove_df('data/fasttext/v2/pos/base/positive.csv', 'data/fasttext/v2/fst/neg_ge_3.csv')
+remove_df('data/fasttext/neg/base/negative.csv', 'data/fasttext/r1/pos_negative_0.9.csv')
+remove_df('data/fasttext/neg_llm/base/negative.csv', 'data/fasttext/r1/pos_negative_0.9.csv')
 # remove_df('data/fasttext/v2/neg/base/negative.csv', 'data/fasttext/v2/pos/base/positive.csv')
 # remove_df('data/fasttext/v2/neg_llm//positive.csv', 'data/fasttext/v1/pos/long/r9.csv', True)
