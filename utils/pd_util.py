@@ -44,6 +44,26 @@ def read_file(file: str, format: str = 'csv', compression: str = 'infer') -> Dat
         raise ValueError("仅支持 'csv', 'jsonl', 'json' 和 'parquet' 格式")
     return df
 
+def write_file(output_path: str, df:DataFrame,  format: str = 'csv', index=False, **kwargs):
+    """
+    读取不同格式的文件，支持zstd压缩
+
+    参数:
+        output_path: 文件路径
+        df:  要写入的数据
+        format: 文件格式，支持 'csv', 'json', 'jsonl', 'parquet'
+        zstd: 是否为zstd压缩文件
+    """
+    # 根据文件格式读取数据
+    if format == "csv":
+        df.to_csv(output_path, index=index, ** kwargs)
+    elif format == "jsonl":
+        df.to_json(output_path,  orient="records", lines=True, force_ascii=False, ** kwargs)
+    elif format == "parquet":
+        df.to_parquet(output_path, index=index, ** kwargs)
+    else:
+        raise ValueError("仅支持 'csv', 'jsonl' 和 'parquet' 格式")
+
 def append_to_csv(file_path, new_data, index=False, **kwargs):
     """
     向CSV文件追加数据
@@ -65,7 +85,7 @@ def append_to_csv(file_path, new_data, index=False, **kwargs):
             header=not file_exists,
             index=index,** kwargs
         )
-        logger.info(f"成功向CSV文件追加了 {len(new_data)} 行数据")
+        logger.info(f"成功向{os.path.basename(file_path)}文件追加了 {len(new_data)} 行数据")
         return True
     except Exception as e:
         logger.error(f"追加到CSV时出错: {str(e)}")
