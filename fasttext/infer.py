@@ -16,17 +16,17 @@ class FaxtTextInfer:
     self.model_path = model_path
     self.model = fasttext.load_model(self.model_path)
 
-  def inference(self, df, output_file):
+  def inference(self, df, output_file, ext_column=["warc_record_id", "url"]):
     df = pd.read_csv(input_file)
     logger.info(f"Start inference...")
     start = time.time()
     neg_result = []
     pos_result = []
     for text in tqdm(df['text']):
-      predictions = self.model.predict(text, k=1)  # 不再传 num_threads
-      label = predictions[0][0].replace("__label__", "")
+      labels, probs = self.model.predict(text, k=1)  # 不再传 num_threads
+      label = labels[0].replace("__label__", "")
       result = {
-          "prob": predictions[1][0],
+          "prob": probs[0],
           "text": text
       }
       if (label == '0'):
@@ -60,4 +60,4 @@ def main():
 
 if __name__ == "__main__":
   # 训练流程
-  print('test')
+  main()

@@ -12,3 +12,4 @@ uv.lock
 group_data
 __pycache__
 tmp/
+.ipynb_checkpoints/
