@@ -76,7 +76,7 @@ def append_to_csv(file_path, new_data, index=False, **kwargs):
     """
     try:
         # 检查文件是否存在
-        file_exists = os.path.isfile(file_path)
+        file_exists = os.path.exists(file_path)
 
         # 如果文件存在，不写入表头；否则写入表头
         new_data.to_csv(

@@ -4,6 +4,7 @@ import time
 import json
 import argparse
 import fasttext
+import random
 import pandas as pd
 from tqdm import tqdm
 from glob import glob
@@ -92,7 +93,7 @@ def load_texts_from_jsonl(file_path, text_key="text"):
 
 
 # 使用 fasttext 多线程预测
-def run_inference(model, texts_df, text_key='text', ext_column=["warc_record_id"]):
+def run_inference(model, texts_df, text_key='text', ext_column=['url']):
     texts = texts_df[text_key].tolist()
     logger.info(f"开始推理，样本数: {len(texts)}")
     start = time.time()
@@ -110,14 +111,14 @@ def run_inference(model, texts_df, text_key='text', ext_column=["warc_record_id"
               result[col] = texts_df.iloc[i][col]
             result_list.append(result)
     # 合并结果并过滤
-    df = pd.DataFrame(result_list, columns=['prob', text_key])
+    df = pd.DataFrame(result_list, columns=['prob', text_key] + ext_column)
     end = time.time()
     return end - start, df
 
 # 追加数据到 CSV
 def append_to_csv(file_path, new_data, index=False, **kwargs):
     try:
-        file_exists = os.path.isfile(file_path)
+        file_exists = os.path.exists(file_path)
         new_data.to_csv(
             file_path,
             mode='a',
@@ -133,7 +134,7 @@ def append_to_csv(file_path, new_data, index=False, **kwargs):
 
 # 单个文件处理逻辑（供子进程调用）
 def process_file(args_tuple):
-    file_path, input_dir, output_dir, text_key = args_tuple
+    file_path, input_dir, output_dir, text_key, ext_column = args_tuple
     global global_model  # 使用子进程初始化的模型
     # 获取当前进程的 PID
     pid = os.getpid()
@@ -143,7 +144,13 @@ def process_file(args_tuple):
 
     logger.info(f"[PID:{pid}] 开始处理文件: {file_name}（路径: {file_path}）")
 
-    output_path = f'{file_dir.replace(input_dir, output_dir, 1)}/{file_name}.csv'
+    output_file_dir = file_dir.replace(input_dir, output_dir, 1)
+
+    if not os.path.exists(output_file_dir):
+        logger.warning(f"输出目录 {output_file_dir} 不存在，自动创建")
+        os.makedirs(output_file_dir, exist_ok=True)
+
+    output_path = f'{output_file_dir}/{file_name}.csv'
 
     metrics = {
         "total_samples": 0,
@@ -160,10 +167,10 @@ def process_file(args_tuple):
         length = len(texts_df)
         if length > 0:
             # 使用全局模型进行推理
-            total_time, result_df = run_inference(global_model, texts_df, text_key=text_key)
+            total_time, result_df = run_inference(global_model, texts_df, text_key=text_key, ext_column=ext_column)
             # 保存结果
             if len(result_df) > 0:
-                append_to_csv(f'{output_dir}/{file_name}.csv', result_df, index=False)
+                append_to_csv(output_path, result_df, index=False)
 
             # 计算指标
             avg_time = total_time / length if length > 0 else 0
@@ -205,6 +212,8 @@ if __name__ == "__main__":
     parser.add_argument("--output_dir", type=str, default="result/dclm", help="输出目录")
     parser.add_argument("--processes", type=int, default=WORKERS, help="进程数（默认 CPU 核心数）")
     parser.add_argument("--text_key", type=str, default="text", help="jsonl 中文本字段的键名")
+    parser.add_argument("--ext_column", type=str, default=['url'], nargs='*', help="需要保留的除了text_key外的其它信息")
+
     args = parser.parse_args()
 
     # 创建输出目录
@@ -219,9 +228,11 @@ if __name__ == "__main__":
         sys.exit(1)
     logger.info(f"共找到 {len(files)} 个 .{args.file_ext} 文件待处理")
 
+    random.shuffle(files)
+
     # 准备进程池参数（每个文件的处理参数）
     process_args = [
-        (file, os.path.abspath(args.input_dir), args.output_dir, args.text_key)
+        (file, os.path.abspath(args.input_dir), args.output_dir, args.text_key, args.ext_column)
         for file in files
     ]
 
