@@ -56,6 +56,6 @@ if __name__ == "__main__":
     parser.add_argument("output_dir", type=str)
     parser.add_argument("--prefix", type=str, default="data")
     parser.add_argument("--size", type=int, default=150000, help="Size of rows for splited files")
-    parser.add_argument("--gziped" type=bool default=False)
+    parser.add_argument("--gziped", type=bool, default=False)
     args = parser.parse_args()
     generate_dataset(args.input_file, args.output_dir, args.prefix, args.size, args.gziped)

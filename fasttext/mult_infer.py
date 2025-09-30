@@ -163,6 +163,13 @@ def process_file(args_tuple):
         logger.info(f"[PID:{pid}] 文件: {file_name}（路径: {file_path} 已处理, 跳过")
         return metrics
 
+    headers = ['prob', text_key] + ext_column
+
+    # 创建只包含表头的空DataFrame
+    df = pd.DataFrame(columns=headers)
+
+    df.to_csv(output_path, index=False)
+
     for texts_df in load_texts_from_jsonl(file_path, text_key=text_key):
         length = len(texts_df)
         if length > 0:

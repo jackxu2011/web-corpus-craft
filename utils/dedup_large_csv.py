@@ -34,7 +34,7 @@ def global_dedup(
 
     # 创建输出目录
     output_dir = os.path.dirname(output_path)
-    if output_dir:
+    if not os.path.exists(output_dir):
         os.makedirs(output_dir, exist_ok=True)
 
     # 初始化变量
@@ -89,7 +89,7 @@ def global_dedup(
             first_write = False
 
             # 6. 更新进度条和日志
-            pbar.update(chunk_size)
+            pbar.update()
             pbar.set_postfix({
                 "总处理": f"{total_processed:,}",
                 "总唯一": f"{total_unique:,}",
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     parser.add_argument("input_file", type=str)
     parser.add_argument("output_file", type=str)
     parser.add_argument("--dedup_cols", type=str, default=['text'], nargs='*')
-    parser.add_argument("--chunksize", type=int, default=1_000_000)
+    parser.add_argument("--chunksize", type=int, default=100_000)
     args = parser.parse_args()
     global_dedup(
         input_file=args.input_file,
