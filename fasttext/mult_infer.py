@@ -180,9 +180,9 @@ def process_file(args_tuple):
             metrics["total_time"] =  metrics["total_time"] + total_time
 
     logger.info(f"[PID:{pid}] \n========== 处理报告 [{file_name}] ==========")
-    logger.info(f"[PID:{pid}] 总样本数: {metrics["total_samples"]}")
-    logger.info(f"[PID:{pid}] 符合条件样本数: {metrics["true_samples"]}")
-    logger.info(f"[PID:{pid}] 总耗时: {metrics["total_time"]:.2f}s")
+    logger.info(f"[PID:{pid}] 总样本数: {metrics['total_samples']}")
+    logger.info(f"[PID:{pid}] 符合条件样本数: {metrics['true_samples']}")
+    logger.info(f"[PID:{pid}] 总耗时: {metrics['total_time']:.2f}s")
     logger.info("==========================================")
     return metrics
 
